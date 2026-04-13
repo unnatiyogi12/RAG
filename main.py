@@ -1,6 +1,19 @@
-def main():
-    print("Hello from rag!")
+from dotenv import load_dotenv
+from langchain_mistralai import ChatMistralAI
+from langchain_community.document_loaders import PyPDFLoader
+from langchain_core.prompts import ChatPromptTemplate
 
+load_dotenv()
+data = PyPDFLoader("data/pdf/DSML.pdf")
+docs = data.load()
 
-if __name__ == "__main__":
-    main()
+template = ChatPromptTemplate.from_messages(
+    [("system", "you are a AI that summarizes the text"),
+     ("human", "{data}")]
+)
+model = ChatMistralAI(model = "mistral-small-2506" \
+"")
+
+prompt = template.format_messages(data= docs[0].page_content)
+result = model.invoke(prompt)
+print(result.content)
